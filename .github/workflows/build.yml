@@ -1,9 +1,7 @@
-name: Build LibreOffice Docker Image
+name: Build kkFileView ARM64 Image
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
 
 jobs:
@@ -29,4 +27,4 @@ jobs:
           file: ./Dockerfile
           platforms: linux/arm64
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/libreoffice-build:arm64
+          tags: ghcr.io/${{ github.repository_owner }}/kkfileview:arm64

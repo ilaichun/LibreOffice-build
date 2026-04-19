@@ -1,9 +1,13 @@
 FROM keking/jdk8-tomcat8:latest
 MAINTAINER keking <keking@kkview.cn>
 
-# 安装字体
+# 安装依赖 + 安装【稳定兼容版 LibreOffice 7.5】
 RUN sed -i 's@//.*archive.ubuntu.com@//mirrors.aliyun.com@g' /etc/apt/sources.list && \
     sed -i 's@//security.ubuntu.com@//mirrors.aliyun.com@g' /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        software-properties-common && \
+    add-apt-repository ppa:libreoffice/libreoffice-7-5 -y && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
         libreoffice \
@@ -11,11 +15,11 @@ RUN sed -i 's@//.*archive.ubuntu.com@//mirrors.aliyun.com@g' /etc/apt/sources.li
         libreoffice-calc \
         libreoffice-impress \
         libreoffice-draw \
+        libreoffice-headless \
         fonts-wqy-zenhei \
         fonts-wqy-microhei \
-        ttf-mscorefonts-installer \
         fontconfig \
-        && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 # 部署
 RUN rm -rf /usr/local/tomcat/webapps/ROOT

@@ -9,10 +9,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=zh_CN.UTF-8
 ENV LC_ALL=zh_CN.UTF-8
 
-# 安装全部依赖 + 中文字体 + LibreOffice
+# 安装全部依赖 + 中文字体 + LibreOffice + JDK（kkFileView 需要）
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         openjdk-8-jre \
+        openjdk-8-jdk \
         tzdata \
         locales \
         xfonts-utils \
@@ -44,5 +45,23 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# 刷新系统字体（不需要本地fonts文件夹）
+# 刷新系统字体
 RUN fc-cache -fv
+
+# ============================
+# kkFileView 集成（关键部分）
+# ============================
+WORKDIR /app
+
+# 复制 kkFileView WAR 包
+COPY kkFileView.war /app/kkFileView.war
+
+# 配置 LibreOffice 真实路径（不是假目录！）
+ENV office.home=/usr/lib/libreoffice
+ENV KK_OFFICE_HOME=/usr/lib/libreoffice
+
+# 暴露端口
+EXPOSE 8012
+
+# 启动 kkFileView
+CMD ["java", "-jar", "kkFileView.war"]

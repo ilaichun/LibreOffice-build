@@ -10,17 +10,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 开启 ARM 跨架构构建支持
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # 构建 ARM64 镜像
-      - name: Build ARM64 image
+      - name: Build image
         run: |
           docker buildx build \
             --platform linux/arm64 \
             -t libreoffice:7.5-arm \
             --load .
+
+      # 导出镜像为 tar 包
+      - name: Export image
+        run: |
+          docker save libreoffice:7.5-arm -o libreoffice-7.5-arm.tar
+
+      # 上传到 Artifacts，构建完就能下载
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libreoffice-7.5-arm-image
+          path: libreoffice-7.5-arm.tar
+          retention-days: 30
